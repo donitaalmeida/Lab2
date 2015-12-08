@@ -1,0 +1,204 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html">
+<title><%= user.loggedInUserFname + "'s"%> Friends</title>
+<link type="text/css" href="/stylesheets/userstyle.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script type="text/javascript" src="/stylesheets/jquery-1.10.2.min.js"></script>
+
+
+
+
+</head>
+<body style="font-family: cursive;">
+
+	<div id="w">
+		<nav class="navbar navbar-default">
+			<div id="content" class="clearfix">
+			
+				<div id="userphoto">
+					<form method="post">
+						<button type="submit" class="btn btn-primary" formaction="/Logout">Signout</button>
+					</form>
+
+				</div>
+
+				<img src="/images/cutegirl.jpg" alt="No Profile Photo"
+					height="80px" width="120px">
+				<h1>Facebook</h1>
+
+				<nav class="navbar navbar-default">
+					<div class="container-fluid" style="background: #B3FFE5;">
+						<div class="navbar-header">
+							<a class="navbar-brand">Hi <%=user.loggedInUserFname%></a>
+						</div>
+						<form>
+							<div class="btn-group btn-group-justified" role="group"
+								aria-label="Basic example">
+								<button type="submit" class="btn btn-primary" formaction="/home">Home</button>
+								<button type="submit" class="btn btn-primary"
+									formaction="/friends">Friends</button>
+								<button type="submit" class="btn btn-primary"
+									formaction="/newsfeeds">News Feeds</button>
+								<button type="submit" class="btn btn-primary"
+									formaction="/groups">Groups</button>
+							</div>
+						</form>
+						<!-- container fluid end -->
+					
+						<div class="row"  ng-app="myApp" ng-controller="Controller">
+							<div class="col-md-6" style="padding: 10px" >
+								<div >
+
+									<input ng-model="searchrequest" type="text"
+										placeholder="Search friend" name="searchrequest"></input>
+									<button type="submit" class="btn btn-primary  btn-sm"
+										value="Submit" ng-click="search()">Submit</button>
+									<div >
+										{{searchresult.user_fname+" "+searchresult.user_lname}}
+										<button  ng-show="request1" class="btn btn-primary" value="searchresult.user_fname" ng-click="sendRequest(searchresult.user_name)">Send
+											Request</button>
+									</div>
+								</div>
+											<div>
+									<b>Friend List:</b>
+									
+									 <%if (typeof friends !== "undefined") {
+									for(var i=0;i
+									<friends.length ;i++){
+								if(friends[i].status==2){%>
+									<p><%=friends[i].user_name%></p>
+									<% } }}%> 
+									
+									<b>Pending Approvals:</b> <%if (typeof friends !==
+									"undefined") { for(var i=0;i<friends.length
+										;i++){
+							if(friends[i].status==1){%>
+							<p><%=friends[i].user_name%></p>
+							<%
+							}
+							}}%>
+		
+				
+								</div>
+								
+			
+
+							</div>
+							<div class="col-md-6" style="padding: 10px" >
+
+								<div >
+								<button ng-click="showRequests()" class="btn btn-primary  btn-sm" value="Check Friend Request" name="check">Check Friend Request</button>
+								<div ng-show="friend_requests">
+
+									<%if (typeof friends !== "undefined") { for(var i=0;i
+									<friends.length ;i++){
+												if(friends[i].status==0){%>
+												<p ng-hide="hide"><%=friends[i].user_name%>
+												<button  class="btn btn-primary  btn-sm" ng-click="AcceptRequest('<%=friends[i].user_name%>')">Accept</button>
+												<button  class="btn btn-primary  btn-sm" ng-click="RejectRequest('<%=friends[i].user_name%>')">Delete</button>
+												
+												</p>
+												
+												<%
+												}
+											}}%>
+										</div>
+										
+								</div> 
+							</div>
+							</div>
+							<!-- end of row -->
+						
+
+
+					</div><!-- clearfix end -->
+			</div>
+			<br>
+
+
+		</nav>
+	</div>
+	<!-- @end #w -->
+	
+	<script >
+	var app = angular.module('myApp', [])
+	app.controller('Controller', function($scope, $http, $window) {
+		$scope.disabled = "false";
+		$scope.searchrequest;
+		$scope.searchresult;
+		$scope.request1;
+		$scope.friend_requests;
+		
+		
+		$scope.showRequests= function() {
+			$scope.friend_requests = 1;
+		}
+
+		$scope.search = function() {
+			$http({
+				method : "POST",
+				url : '/search',
+				data : {
+					"searchrequest" : $scope.searchrequest
+
+				}
+			}).success(function(data) {
+				$scope.request1 = 1;
+				$scope.searchresult = data.name;
+				console.log(data.name);
+				// window.location.assign('/');
+			})
+		}
+		$scope.sendRequest = function(friendname) {
+			
+			$http({
+				method : "POST",
+				url : '/inputfriend',
+				data : {
+					"friendname" : friendname
+
+				}
+			}).success(function(data) {
+				window.alert(data.message);
+			})
+		}
+		
+		$scope.AcceptRequest = function(friendname) {
+			
+			$http({
+				method : "POST",
+				url : '/acceptfriend',
+				data : {
+					"friendname" : friendname
+				}
+			}).success(function(data) {
+				window.alert(data.message)
+				$scope.hide=1;
+			})
+		}
+		
+		$scope.RejectRequest = function(friendname) {
+			
+			$http({
+				method : "POST",
+				url : '/rejectfriend',
+				data : {
+					"friendname" : friendname
+				}
+			}).success(function(data) {
+				window.alert(data.message)
+				$scope.hide=1;
+			})
+		}
+
+
+	});
+</script>
+
+</body>
+</html>

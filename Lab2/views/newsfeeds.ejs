@@ -1,0 +1,66 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html">
+<title><%= user.loggedInUserFname + "'s"%>Newsfeeds</title>
+<link type="text/css" href="/stylesheets/userstyle.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script type="text/javascript" src="/stylesheets/jquery-1.10.2.min.js"></script>
+</head>
+<body style="font-family: cursive; color: gray;">
+
+	<div id="w">
+		<nav class="navbar navbar-default">
+			<div id="content" class="clearfix">
+
+				<div id="userphoto">
+					<form method="post">
+						<button type="submit" class="btn btn-primary" formaction="/Logout">Signout</button>
+					</form>
+					
+				</div>
+
+			<img src="/images/cutegirl.jpg" alt="No Profile Photo" height="80px" width="120px">	<h1>Facebook</h1>
+
+				<nav class="navbar navbar-default">
+					<div class="container-fluid" style="background: #B3FFE5;">
+						<div class="navbar-header">
+							<a class="navbar-brand">Hi <%=user.loggedInUserFname%></a>
+						</div>
+						<form>
+							<div class="btn-group btn-group-justified" role="group"
+								aria-label="Basic example" style="background: #B3FFE5;">
+								<button type="submit" class="btn btn-secondary btn btn-primary"
+									formaction="/home">Home</button>
+								<button type="submit" class="btn btn-secondary btn btn-primary"
+									formaction="/friends">Friends</button>
+								<button type="submit" class="btn btn-secondary btn btn-primary"
+									formaction="/newsfeeds">News Feeds</button>
+								<button type="submit" class="btn btn-secondary btn btn-primary"
+									formaction="/groups">Groups</button>
+							</div>
+						</form>
+						NEWS FEEDS
+						<hr>
+						<% for (var i = 0; i < rows.length; i++) { if(typeof rows[i].Events!=='undefined'){
+						for(var j=0;j<rows[i].Events.length;j++){%>
+						<ul><%=rows[i].user_fname +" "%> :
+							<%=rows[i].Events[j].event_description%> on <%=rows[i].Events[j].event_date +" "%>
+						</ul>
+
+						<% }}}%>
+					</div>
+			</div>
+			<br>
+
+
+
+		</nav>
+	</div>
+	<!-- @end #w -->
+
+</body>
+</html>
